@@ -1,0 +1,773 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lexicon</title>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Lexicon">
+<meta name="application-name" content="Lexicon">
+<meta name="theme-color" content="#f5f0e8">
+<link rel="apple-touch-icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxODAgMTgwIj4KICA8cmVjdCB3aWR0aD0iMTgwIiBoZWlnaHQ9IjE4MCIgcng9IjM2IiBmaWxsPSIjMWExNzE0Ii8+CiAgPHJlY3QgeD0iMTAiIHk9IjEwIiB3aWR0aD0iMTYwIiBoZWlnaHQ9IjE2MCIgcng9IjI4IiBmaWxsPSJub25lIiBzdHJva2U9IiNjOGJmYWEiIHN0cm9rZS13aWR0aD0iMS41IiBvcGFjaXR5PSIwLjQiLz4KICA8dGV4dCB4PSI5MCIgeT0iMTIwIiBmb250LWZhbWlseT0iR2VvcmdpYSxzZXJpZiIgZm9udC1zaXplPSIxMDAiIGZvbnQtd2VpZ2h0PSI3MDAiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZpbGw9IiNlOGQ1YTMiPlc8L3RleHQ+CiAgPHRleHQgeD0iOTAiIHk9IjE1OCIgZm9udC1mYW1pbHk9Ikdlb3JnaWEsc2VyaWYiIGZvbnQtc2l6ZT0iMTIiIGxldHRlci1zcGFjaW5nPSI2IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSIjN2E3MDYwIj5MRVhJQ09OPC90ZXh0Pgo8L3N2Zz4=">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'%3E%3Crect width='180' height='180' rx='36' fill='%231a1714'/%3E%3Ctext x='90' y='115' font-family='Georgia,serif' font-size='96' font-weight='700' text-anchor='middle' fill='%23e8d5a3'%3E%D0%97%3C/text%3E%3Ctext x='90' y='158' font-family='Georgia,serif' font-size='13' letter-spacing='5' text-anchor='middle' fill='%23c8bfaa'%3ELEXICON%3C/text%3E%3C/svg%3E">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400;1,600&family=Crimson+Pro:ital,wght@0,300;0,400;1,300;1,400&family=JetBrains+Mono:wght@300;400&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --ink: #1a1714;
+    --paper: #f5f0e8;
+    --paper2: #ede8dc;
+    --rule: #c8bfaa;
+    --accent: #8b4513;
+    --accent-light: #c4713a;
+    --muted: #7a7060;
+    --gold: #b8943a;
+    --serif: 'Cormorant Garamond', Georgia, serif;
+    --body: 'Crimson Pro', Georgia, serif;
+    --mono: 'JetBrains Mono', monospace;
+  }
+
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--body);
+    min-height: 100vh;
+    position: relative;
+  }
+
+  /* Paper texture */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23noise)' opacity='0.06'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* Ruled lines */
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: repeating-linear-gradient(
+      transparent,
+      transparent 31px,
+      rgba(139, 69, 19, 0.07) 31px,
+      rgba(139, 69, 19, 0.07) 32px
+    );
+    background-position: 0 60px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .page {
+    position: relative;
+    z-index: 1;
+    max-width: 680px;
+    margin: 0 auto;
+    padding: 0 32px 80px;
+  }
+
+  /* Masthead */
+  .masthead {
+    border-bottom: 3px double var(--rule);
+    padding: 48px 0 20px;
+    margin-bottom: 8px;
+    text-align: center;
+    position: relative;
+  }
+
+  .pub-name {
+    font-family: var(--serif);
+    font-size: 13px;
+    letter-spacing: 6px;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-weight: 300;
+  }
+
+  .masthead-title {
+    font-family: var(--serif);
+    font-size: 72px;
+    font-weight: 700;
+    line-height: 0.9;
+    color: var(--ink);
+    letter-spacing: -2px;
+    margin: 10px 0 12px;
+  }
+
+  .masthead-rule {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    color: var(--muted);
+    font-family: var(--serif);
+    font-size: 13px;
+    font-style: italic;
+  }
+
+  .masthead-rule span { color: var(--rule); }
+
+  .date-line {
+    border-top: 1px solid var(--rule);
+    padding-top: 12px;
+    margin-top: 8px;
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--muted);
+    display: flex;
+    justify-content: space-between;
+  }
+
+  /* Controls */
+  .controls {
+    display: flex;
+    gap: 10px;
+    margin: 28px 0;
+    align-items: center;
+  }
+
+  .theme-select {
+    flex: 1;
+    background: var(--paper2);
+    border: 1px solid var(--rule);
+    color: var(--ink);
+    font-family: var(--body);
+    font-size: 15px;
+    padding: 10px 14px;
+    border-radius: 2px;
+    appearance: none;
+    cursor: pointer;
+    outline: none;
+  }
+
+  .generate-btn {
+    background: var(--accent);
+    color: var(--paper);
+    border: none;
+    font-family: var(--serif);
+    font-size: 14px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 11px 28px;
+    cursor: pointer;
+    border-radius: 2px;
+    transition: background 0.2s;
+    white-space: nowrap;
+  }
+  .generate-btn:hover:not(:disabled) { background: var(--accent-light); }
+  .generate-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  /* Skeleton / loading */
+  .skeleton {
+    background: linear-gradient(90deg, var(--paper2) 25%, var(--rule) 50%, var(--paper2) 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.4s infinite;
+    border-radius: 2px;
+    display: block;
+  }
+  @keyframes shimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
+
+  /* Word card */
+  .word-card {
+    opacity: 0;
+    transform: translateY(12px);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+  }
+  .word-card.visible { opacity: 1; transform: translateY(0); }
+
+  /* The word */
+  .word-header {
+    border-bottom: 1px solid var(--rule);
+    padding-bottom: 20px;
+    margin-bottom: 24px;
+  }
+
+  .word-itself {
+    font-family: var(--serif);
+    font-size: 80px;
+    font-weight: 600;
+    line-height: 1;
+    color: var(--ink);
+    letter-spacing: -3px;
+  }
+
+  .word-meta {
+    display: flex;
+    align-items: baseline;
+    gap: 20px;
+    margin-top: 8px;
+    flex-wrap: wrap;
+  }
+
+  .pronunciation {
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--muted);
+  }
+
+  .part-of-speech {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 17px;
+    color: var(--accent);
+  }
+
+  .origin-tag {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--paper);
+    background: var(--muted);
+    padding: 2px 8px;
+    border-radius: 2px;
+  }
+
+  /* Sections */
+  .section {
+    margin-bottom: 28px;
+  }
+
+  .section-label {
+    font-family: var(--mono);
+    font-size: 9px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--gold);
+    border-bottom: 1px solid var(--rule);
+    padding-bottom: 6px;
+    margin-bottom: 14px;
+  }
+
+  .definition {
+    font-size: 19px;
+    line-height: 1.6;
+    color: var(--ink);
+    font-weight: 300;
+  }
+
+  .etymology {
+    font-size: 15px;
+    line-height: 1.7;
+    color: var(--muted);
+    font-style: italic;
+  }
+
+  /* Usage examples — two columns */
+  .usage-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+  @media (max-width: 520px) { .usage-grid { grid-template-columns: 1fr; } }
+
+  .usage-card {
+    background: var(--paper2);
+    border: 1px solid var(--rule);
+    border-radius: 2px;
+    padding: 16px;
+    position: relative;
+  }
+
+  .usage-context {
+    font-family: var(--mono);
+    font-size: 9px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 8px;
+  }
+
+  .usage-sentence {
+    font-size: 15px;
+    line-height: 1.6;
+    color: var(--ink);
+  }
+
+  .usage-sentence em {
+    font-style: italic;
+    color: var(--accent);
+    font-weight: 600;
+  }
+
+  /* Synonyms */
+  .syn-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .syn-pill {
+    font-family: var(--serif);
+    font-size: 15px;
+    border: 1px solid var(--rule);
+    padding: 4px 14px;
+    border-radius: 100px;
+    color: var(--muted);
+    background: var(--paper2);
+    cursor: pointer;
+    transition: all 0.15s;
+    font-style: italic;
+  }
+  .syn-pill:hover { border-color: var(--accent); color: var(--accent); }
+
+  /* Memory tip */
+  .memory-tip {
+    background: var(--paper2);
+    border-left: 3px solid var(--gold);
+    padding: 16px 20px;
+    font-size: 16px;
+    line-height: 1.7;
+    color: var(--ink);
+    font-style: italic;
+  }
+
+  /* Divider ornament */
+  .ornament {
+    text-align: center;
+    color: var(--rule);
+    font-size: 20px;
+    margin: 32px 0;
+    letter-spacing: 12px;
+  }
+
+  /* History */
+  .history-section { margin-top: 40px; }
+
+  .history-title {
+    font-family: var(--serif);
+    font-size: 13px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 16px;
+  }
+
+  .history-list { display: flex; flex-direction: column; gap: 8px; }
+
+  .history-item {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    padding: 10px 0;
+    border-bottom: 1px dashed var(--rule);
+    cursor: pointer;
+    transition: color 0.15s;
+  }
+  .history-item:hover .h-word { color: var(--accent); }
+
+  .h-date { font-family: var(--mono); font-size: 10px; color: var(--muted); min-width: 70px; }
+  .h-word { font-family: var(--serif); font-size: 20px; font-style: italic; }
+  .h-pos { font-family: var(--mono); font-size: 10px; color: var(--muted); }
+
+  /* Empty state */
+  .empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    opacity: 0;
+    animation: fadeIn 0.6s 0.2s ease forwards;
+  }
+  @keyframes fadeIn { to { opacity: 1; } }
+
+  .empty-ornament {
+    font-family: var(--serif);
+    font-size: 80px;
+    color: var(--rule);
+    line-height: 1;
+    margin-bottom: 16px;
+  }
+
+  .empty-title {
+    font-family: var(--serif);
+    font-size: 28px;
+    font-weight: 300;
+    font-style: italic;
+    color: var(--muted);
+    margin-bottom: 8px;
+  }
+
+  .empty-sub {
+    font-size: 15px;
+    color: var(--rule);
+  }
+
+  /* Error */
+  .error-msg {
+    background: #fdf0ed;
+    border: 1px solid #e8b4a8;
+    color: #8b3020;
+    padding: 14px 18px;
+    font-size: 14px;
+    border-radius: 2px;
+    margin-bottom: 20px;
+    font-family: var(--mono);
+  }
+
+  /* Spinner inside button */
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .btn-spinner {
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    border: 2px solid rgba(245,240,232,0.4);
+    border-top-color: var(--paper);
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+    vertical-align: middle;
+    margin-right: 6px;
+  }
+
+  /* API Key setup */
+  .key-setup {
+    background: var(--paper2);
+    border: 1px solid var(--rule);
+    border-radius: 2px;
+    padding: 28px 28px 24px;
+    margin-bottom: 28px;
+    animation: fadeIn 0.4s ease;
+  }
+  .key-setup-title {
+    font-family: var(--serif);
+    font-size: 22px;
+    font-style: italic;
+    margin-bottom: 6px;
+  }
+  .key-setup-sub {
+    font-size: 14px;
+    color: var(--muted);
+    margin-bottom: 18px;
+    line-height: 1.6;
+  }
+  .key-setup-sub a { color: var(--accent); }
+  .key-row { display: flex; gap: 10px; }
+  .key-input {
+    flex: 1;
+    background: var(--paper);
+    border: 1px solid var(--rule);
+    color: var(--ink);
+    font-family: var(--mono);
+    font-size: 12px;
+    padding: 10px 14px;
+    border-radius: 2px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .key-input:focus { border-color: var(--accent); }
+  .key-save-btn {
+    background: var(--accent);
+    color: var(--paper);
+    border: none;
+    font-family: var(--serif);
+    font-size: 13px;
+    letter-spacing: 1px;
+    padding: 10px 20px;
+    cursor: pointer;
+    border-radius: 2px;
+    transition: background 0.2s;
+    white-space: nowrap;
+  }
+  .key-save-btn:hover { background: var(--accent-light); }
+  .key-saved-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--paper2);
+    border: 1px solid var(--rule);
+    border-radius: 2px;
+    padding: 10px 16px;
+    margin-bottom: 28px;
+    font-size: 13px;
+    color: var(--muted);
+  }
+  .key-saved-bar span { font-family: var(--mono); font-size: 11px; }
+  .key-clear-btn {
+    background: none;
+    border: 1px solid var(--rule);
+    color: var(--muted);
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 1px;
+    padding: 4px 10px;
+    cursor: pointer;
+    border-radius: 2px;
+    transition: all 0.15s;
+  }
+  .key-clear-btn:hover { border-color: var(--accent); color: var(--accent); }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="masthead">
+    <div class="pub-name">The Lexicon — Vol. I</div>
+    <div class="masthead-title">Daily Word</div>
+    <div class="masthead-rule">
+      <span>✦</span> Expand your language, one word at a time <span>✦</span>
+    </div>
+    <div class="date-line">
+      <span id="today-date">—</span>
+      <span>Est. Today</span>
+    </div>
+  </div>
+
+  <div id="key-setup" class="key-setup" style="display:none">
+    <div class="key-setup-title">Enter your Groq API Key</div>
+    <div class="key-setup-sub">
+      Get a free key in 30 seconds at <a href="https://console.groq.com/keys" target="_blank">console.groq.com/keys</a>. It stays saved locally in your browser — never sent anywhere else.
+    </div>
+    <div class="key-row">
+      <input class="key-input" id="key-input" type="password" placeholder="gsk_..." />
+      <button class="key-save-btn" onclick="saveKey()">Save Key</button>
+    </div>
+  </div>
+
+  <div id="key-saved-bar" class="key-saved-bar" style="display:none">
+    <span>🔑 Groq key saved locally</span>
+    <button class="key-clear-btn" onclick="clearKey()">Change Key</button>
+  </div>
+
+  <div class="controls">
+    <select class="theme-select" id="theme-select">
+      <option value="everyday">Everyday Life</option>
+      <option value="work">Professional / Work</option>
+      <option value="emotions">Emotions & Feelings</option>
+      <option value="social">Social Situations</option>
+      <option value="persuasion">Persuasion & Debate</option>
+      <option value="description">Vivid Descriptions</option>
+      <option value="surprise">Surprise Me</option>
+    </select>
+    <button class="generate-btn" id="gen-btn" onclick="generateWord()">
+      New Word
+    </button>
+  </div>
+
+  <div id="error-box" class="error-msg" style="display:none"></div>
+
+  <div id="content-area">
+    <div class="empty-state">
+      <div class="empty-ornament">𝔚</div>
+      <div class="empty-title">Your word awaits.</div>
+      <div class="empty-sub">Choose a theme and press New Word to begin.</div>
+    </div>
+  </div>
+
+  <div id="history-section" class="history-section" style="display:none">
+    <div class="ornament">· · ·</div>
+    <div class="history-title">Previous Words</div>
+    <div class="history-list" id="history-list"></div>
+  </div>
+
+</div>
+
+<script>
+  const history = [];
+
+  // Key management
+  function getKey() { return localStorage.getItem('groq_api_key') || ''; }
+
+  function saveKey() {
+    const val = document.getElementById('key-input').value.trim();
+    if (!val.startsWith('gsk_')) { alert('That doesn\'t look like a Groq key (should start with gsk_)'); return; }
+    localStorage.setItem('groq_api_key', val);
+    showKeyState();
+  }
+
+  function clearKey() {
+    localStorage.removeItem('groq_api_key');
+    showKeyState();
+  }
+
+  function showKeyState() {
+    const key = getKey();
+    document.getElementById('key-setup').style.display = key ? 'none' : 'block';
+    document.getElementById('key-saved-bar').style.display = key ? 'flex' : 'none';
+    document.getElementById('gen-btn').disabled = !key;
+  }
+
+  // Set date
+  const now = new Date();
+  document.getElementById('today-date').textContent = now.toLocaleDateString('en-US', {
+    weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
+  });
+
+  showKeyState();
+
+  function setLoading(on) {
+    const btn = document.getElementById('gen-btn');
+    btn.disabled = on;
+    btn.innerHTML = on
+      ? '<span class="btn-spinner"></span> Fetching...'
+      : 'New Word';
+  }
+
+  function showError(msg) {
+    const box = document.getElementById('error-box');
+    box.textContent = msg;
+    box.style.display = 'block';
+  }
+
+  function hideError() {
+    document.getElementById('error-box').style.display = 'none';
+  }
+
+  async function generateWord() {
+    hideError();
+    setLoading(true);
+
+    const theme = document.getElementById('theme-select').value;
+    const themeLabels = {
+      everyday: 'everyday life',
+      work: 'professional and work settings',
+      emotions: 'emotions and feelings',
+      social: 'social situations and relationships',
+      persuasion: 'persuasion, debate, and rhetoric',
+      description: 'vivid descriptions and storytelling',
+      surprise: 'any domain — surprise the user'
+    };
+
+    const usedWords = history.map(h => h.word).join(', ');
+    const avoidStr = usedWords ? `Do NOT use any of these already-shown words: ${usedWords}.` : '';
+
+    const prompt = `You are a vocabulary teacher. Generate one genuinely useful English word for the theme: "${themeLabels[theme]}". ${avoidStr}
+
+Pick a word that is:
+- Not too obscure, not too basic — the sweet spot where someone thinks "I should use this more"
+- Useful in real daily conversation, formal emails, or casual texting
+- Interesting enough that a person would remember it
+
+Respond ONLY with valid JSON, no markdown, no explanation. Use this exact structure:
+{
+  "word": "the word",
+  "pronunciation": "/phonetic/",
+  "part_of_speech": "noun / verb / adjective / adverb / etc.",
+  "origin": "Latin / French / Old English / Greek / etc.",
+  "definition": "Clear, conversational definition in 1-2 sentences.",
+  "etymology": "Brief, interesting origin story in 1-2 sentences.",
+  "usage": [
+    { "context": "Formal / Work Email", "sentence": "A sentence using the word naturally, with the word wrapped in <em> tags." },
+    { "context": "Casual / Text Message", "sentence": "A casual sentence using the word, with the word wrapped in <em> tags." },
+    { "context": "Social / Conversation", "sentence": "A conversational sentence, with the word wrapped in <em> tags." },
+    { "context": "Written / Descriptive", "sentence": "A descriptive sentence, with the word wrapped in <em> tags." }
+  ],
+  "synonyms": ["syn1", "syn2", "syn3", "syn4"],
+  "memory_tip": "A fun, memorable tip or mnemonic to remember this word."
+}`;
+
+    try {
+      const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${getKey()}`
+        },
+        body: JSON.stringify({
+          model: 'llama-3.3-70b-versatile',
+          max_tokens: 1000,
+          messages: [{ role: 'user', content: prompt }]
+        })
+      });
+
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error?.message || 'API error');
+
+      const text = data.choices?.[0]?.message?.content || '';
+      const clean = text.replace(/```json|```/g, '').trim();
+      const word = JSON.parse(clean);
+
+      // Save to history
+      history.unshift({ word: word.word, pos: word.part_of_speech, theme });
+      renderWord(word);
+      renderHistory();
+
+    } catch (err) {
+      showError('Could not fetch word: ' + err.message);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  function renderWord(w) {
+    const html = `
+      <div class="word-card" id="word-card">
+        <div class="word-header">
+          <div class="word-itself">${w.word}</div>
+          <div class="word-meta">
+            <span class="pronunciation">${w.pronunciation}</span>
+            <span class="part-of-speech">${w.part_of_speech}</span>
+            <span class="origin-tag">${w.origin}</span>
+          </div>
+        </div>
+
+        <div class="section">
+          <div class="section-label">Definition</div>
+          <div class="definition">${w.definition}</div>
+        </div>
+
+        <div class="section">
+          <div class="section-label">Etymology</div>
+          <div class="etymology">${w.etymology}</div>
+        </div>
+
+        <div class="section">
+          <div class="section-label">How to use it</div>
+          <div class="usage-grid">
+            ${w.usage.map(u => `
+              <div class="usage-card">
+                <div class="usage-context">${u.context}</div>
+                <div class="usage-sentence">${u.sentence}</div>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+
+        <div class="section">
+          <div class="section-label">Synonyms & Alternatives</div>
+          <div class="syn-list">
+            ${w.synonyms.map(s => `<span class="syn-pill">${s}</span>`).join('')}
+          </div>
+        </div>
+
+        <div class="section">
+          <div class="section-label">Remember It</div>
+          <div class="memory-tip">${w.memory_tip}</div>
+        </div>
+      </div>
+    `;
+
+    document.getElementById('content-area').innerHTML = html;
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        document.getElementById('word-card')?.classList.add('visible');
+      });
+    });
+  }
+
+  function renderHistory() {
+    if (history.length <= 1) return;
+    const sec = document.getElementById('history-section');
+    const list = document.getElementById('history-list');
+    sec.style.display = 'block';
+
+    list.innerHTML = history.slice(1).map((h, i) => `
+      <div class="history-item">
+        <span class="h-date">${getDayLabel(i + 1)}</span>
+        <span class="h-word">${h.word}</span>
+        <span class="h-pos">${h.pos}</span>
+      </div>
+    `).join('');
+  }
+
+  function getDayLabel(daysAgo) {
+    if (daysAgo === 1) return 'Earlier';
+    return `${daysAgo}x ago`;
+  }
+</script>
+</body>
+</html>
